@@ -1,12 +1,27 @@
 {
-  "builders": [
-    {
-      "type": "amazon-ebs",
-      "region": "us-east-1",
-      "source_ami": "ami-fce3c696",
-      "instance_type": "t2.micro",
-      "ami_name": "packer AWS {{timestamp}}",
-      "ssh_username": "ubuntu"
-    }
-  ]
-}
+    "builders": [
+      {
+        "type": "amazon-ebs",
+        "region": "us-east-1",
+        "source_ami_filter": {
+            "filters": {
+              "virtualization-type": "hvm",
+              "name": "ubuntu/images/*ubuntu-bionic-18.04-amd64-server-*",
+              "root-device-type": "ebs"
+            },
+            "owners": ["099720109477"],
+            "most_recent": true
+          },
+        "instance_type": "t2.micro",
+        "ssh_username": "ubuntu",
+        "ami_name": "packer_AWS {{timestamp}}",
+        "ami_description": "from {{.SourceAMI}}",
+        "tags": {
+          "OS_Version": "Ubuntu",
+          "Release": "Latest",
+          "Base_AMI_Name": "{{ .SourceAMIName }}",
+          "Extra": "{{ .SourceAMITags.TagName }}"
+        }
+      }
+    ]
+  }
